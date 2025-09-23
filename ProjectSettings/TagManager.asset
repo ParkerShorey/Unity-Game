@@ -3,20 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags:
-  - PlayerMain
-  - DetachOne
-  - KillObject
-  - ground
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Kill
+  - 
   - Water
   - UI
-  - ground
-  - 
+  - Ground
+  - kill
   - 
   - 
   - 
