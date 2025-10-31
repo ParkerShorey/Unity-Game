@@ -1,12 +1,15 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class respawnObjectScript : MonoBehaviour
 {
-    public TilemapCollider2D kill2D;
+    [SerializeField] public JumpController jump;
+    [SerializeField] public PlayerController playerc;
+
     void Start()
     {
-        kill2D = GetComponent<TilemapCollider2D>();
+        jump = GetComponent<JumpController>();
+        playerc = GetComponent<PlayerController>();
     }
 
     void Update()
@@ -14,3 +17,4 @@ public class respawnObjectScript : MonoBehaviour
         
     }
 }
+*/
