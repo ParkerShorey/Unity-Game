@@ -2,8 +2,8 @@
 name: Mentor Communication
 about: Weekly mentor communication
 title: 'Mentor Communication - Week of #/# - #/#'
-labels: ''
-assignees: Msilkaitis, MsZHHS, ParkerShorey, zacharyfleck
+labels: Mentor Communication
+assignees: ockerlundkyle, LlamasOnTheRun, MsZHHS, zacharyfleck, ParkerShorey, Msilkaitis
 
 ---
 
@@ -12,6 +12,7 @@ Parker and Max
 
 ## 📝 Current Progress
 _What have you accomplished since your last update? Be specific about tasks, features, or concepts you’ve worked on._
+- 
 - 
 
 ## ⚠️ Current Hold-Ups
@@ -24,11 +25,9 @@ _List any questions you’d like to ask your mentor — technical or non-technic
 
 ## 🎯 Next Steps
 _What are your goals before your next update?_
--  
+-   
+- 
 
 ## 💡 Additional Notes (Optional)
 _Anything else you’d like your mentor to know (scheduling, team dynamics, new ideas, etc.)?_
-- 
-
-@MsZHHS 
-@zacharyfleck
+-
