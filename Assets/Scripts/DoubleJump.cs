@@ -1,9 +1,9 @@
-using UnityEngine;
+/*using UnityEngine;
 using UnityEngine.SceneManagement;
 public class DoubleJump : MonoBehaviour
 {
     [SerializeField] GameObject player;
-    [SerializeField] public JumpController jump;
+    [SerializeField] public  jump;
     
     void Start()
     {
@@ -22,3 +22,4 @@ public class DoubleJump : MonoBehaviour
     
 
 }
+*/
