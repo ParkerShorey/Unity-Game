@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private bool isDashing = false;
     private float dashingPower = 24f;
     private float dashingTime = .2f;
-    private float dashCooldown = 1f;
+    [SerializeField] private float dashCooldown;
 
 
     //[Header("For Wallsliding")]
