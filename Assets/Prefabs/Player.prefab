@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 1611441698468773408}
   - component: {fileID: 43462559483003688}
   - component: {fileID: 4810866272500288932}
-  - component: {fileID: 1245131818545595145}
   - component: {fileID: 7054093890563844145}
+  - component: {fileID: 4873640159415620402}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -61,7 +61,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -12.29, y: -7.96, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.984375, y: 0.984375, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2801406408405066372}
@@ -115,16 +115,16 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -5177388603050735206, guid: 71ebafeef3c03457483266a33ab2b270, type: 3}
+  m_Color: {r: 0, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
+  m_DrawMode: 1
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 2
   m_SpriteSortPoint: 0
 --- !u!50 &4810866272500288932
 Rigidbody2D:
@@ -153,35 +153,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &1245131818545595145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6408826270601357581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ccaaa89fa4b0c64083099af8f5a30da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  rb: {fileID: 4810866272500288932}
-  speed: 7
-  jumpForce: 7
-  startPosition: {x: 0, y: 0, z: 0}
-  circlePos: {fileID: 2801406408405066372}
-  checkRadius: 0.2
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 8
-  jumpTime: 0.35
-  maximimumjumps: 2
-  maximumSpeed: 7
-  numDashes: 1
-  boxCollider: {fileID: 7054093890563844145}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!61 &7054093890563844145
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -218,16 +189,46 @@ BoxCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
+    border: {x: 0.25, y: 0.25, z: 0.25, w: 0.25}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.984375, y: 0.984375}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
-    drawMode: 0
+    drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 0.95, y: 0.95}
   m_EdgeRadius: 0
+--- !u!114 &4873640159415620402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6408826270601357581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38165bae6314ea41be9925036ff0ed9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::aPlayerController
+  rb: {fileID: 4810866272500288932}
+  speed: 10
+  jumpForce: 10
+  startPosition: {x: 0, y: 0, z: 0}
+  circlePos: {fileID: 2801406408405066372}
+  checkRadius: 0.1
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 64
+  jumpTime: 0.3
+  maximimumjumps: 2
+  maximumSpeed: 7
+  numDashes: 1
+  dashCooldown: 0
+  boxCollider: {fileID: 0}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &7612365388724812904
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     public float speed;
     private float moveInput;
-    [SerializeField] public float jumpForce;
+    
     [SerializeField] public Vector3 startPosition;
     [SerializeField] public Transform circlePos;
     [SerializeField] public float checkRadius;
@@ -14,18 +14,24 @@ public class PlayerController : MonoBehaviour
     //[SerializeField] public Transform wallCheck;
     //[SerializeField] LayerMask wallLayer;
     //private bool isWallSliding;
-    private float wallSlidingSpeed = 2f;
+    //private float wallSlidingSpeed = 2f;
+    [Header("For Jumping")]
     private float jumpTimeCounter;
     public float jumpTime;
     private bool isJumping; 
     public int maximimumjumps = 2;
     public float maximumSpeed = 7;
+    [SerializeField] public float jumpForce;
+    //private bool jumpReleased;
+
+    [Header("For Dashing")]
     public float numDashes = 1;
     private bool canDash = true;
     private bool isDashing = false;
     private float dashingPower = 24f;
     private float dashingTime = .2f;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private int availableDashes;
 
 
     //[Header("For Wallsliding")]
@@ -37,7 +43,11 @@ public class PlayerController : MonoBehaviour
     [Header("For WallJumping")]
     [SerializeField] private BoxCollider2D boxCollider;
     [SerializeField] LayerMask wallLayer;
-    private float wallJumpCooldown;
+    [SerializeField] private float wallJumpCooldown;
+    [SerializeField] private float airMoveCooldown;
+    private bool isWallJumping = false;
+    private bool jumpReleased = false;
+
 
     void Awake()
     {
@@ -58,7 +68,14 @@ public class PlayerController : MonoBehaviour
             return;
         }
         moveInput = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
+        //Debug.Log(moveInput);
+        if(!isWallJumping)
+        {
+            rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
+        }
+            
+        
+        
         //Vector2 moveVector = (moveInput * speed, 0f);
         // try to add a force more with a timer so that it will accelerate the player for a certain amount of time and reset when the player stops moving horizontally or changes direction
         
@@ -94,28 +111,40 @@ public class PlayerController : MonoBehaviour
          // Uses a circle object on the player to decide when they are touching the ground
         //CheckCol(); 
         //WallSlide();
-        Jump();
-        TouchingWall();
-        if(Input.GetKeyDown(KeyCode.Space) && canDash)
+        StartCoroutine(Jump());
+        //TouchingWall();
+        if(TouchingWall() || IsGrounded())
         {
-            StartCoroutine(Dash());
+            numDashes = availableDashes;
         }
+        if(numDashes >= 1)
+        {
+            canDash = true;
+        } 
+        else{
+            canDash = false;
+        }
+        /*if(TouchingWall() && IsGrounded())
+        {
+            
+        }*/
+        
+        StartCoroutine(Dash());
         //Debug.Log(TouchingWall());
-        if(TouchingWall() && !IsGrounded() && Input.GetButtonDown("Jump"))
-        {
-            Debug.Log("Should Wall Jump");
-            WallJump();
-            //wallJumpCooldown = 0;
-        }
+        StartCoroutine(WallJump());
+        HandleCornerJumping();
+
             
             
-            if (Input.GetKey(KeyCode.LeftArrow) && TouchingWall()){
-                Debug.Log("left");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x - 10 , rb.linearVelocity.y);
-            } else if (Input.GetKey(KeyCode.RightArrow) && TouchingWall()) {
+//            if (Input.GetKey(KeyCode.LeftArrow) && TouchingWall()){
+            /*if (Input.GetButtonDown("Jump") && TouchingWall()){
+                oldSpeed = speed;
+                speed += 30;
+                rb.linearVelocity = new Vector2(speed , rb.linearVelocity.y);
+            }/* else if (Input.GetKey(KeyCode.RightArrow) && TouchingWall()) {
                 Debug.Log("right");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x + 10 , rb.linearVelocity.y);
-            }
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x + 30 , rb.linearVelocity.y);
+            }*/
         
     }
 
@@ -134,18 +163,18 @@ public class PlayerController : MonoBehaviour
     {
         return Physics2D.OverlapCircle(circlePos.position, checkRadius, whatIsGround);
     }
-    void Jump()
+    /*void Jump()
     {
         if(IsGrounded() && Input.GetButtonDown("Jump")){ // this will run when the button is pressed initially
-            Debug.Log("Pressed");
+          //  Debug.Log("Pressed");
             isJumping = true;
             jumpTimeCounter = jumpTime; 
             rb.linearVelocity = Vector2.up * jumpForce; // adds the jumpforce to the players vertical velocity, I might want to make this into a force rather than velocity
-            Debug.Log(isJumping);
+            //Debug.Log(isJumping);
         }
 
         if(Input.GetButton("Jump") && isJumping == true){ // this will run when the jump button is held
-            Debug.Log("Holding");
+            //Debug.Log("Holding");
             if(jumpTimeCounter > 0){ // will add this force as long as the time is still going
                  rb.linearVelocity = Vector2.up * jumpForce;
                  jumpTimeCounter -= Time.deltaTime;
@@ -155,33 +184,109 @@ public class PlayerController : MonoBehaviour
         }
         if(Input.GetButtonUp("Jump")) // this will run when the player releases the jump button
             {
-                Debug.Log("Released");
+              //  Debug.Log("Released");
                 isJumping = false;
-                Debug.Log(isJumping);
+               // Debug.Log(isJumping);
             }   
     }
-
+    */
+    private IEnumerator Jump()
+    {
+        if(!TouchingWall() && IsGrounded() && Input.GetButtonDown("Jump"))
+        {
+            Debug.Log("JUMP PRESSED");
+            rb.linearVelocity = Vector2.up * jumpForce;
+            //public bool jumpReleased = false;
+            yield return new WaitForSeconds(jumpTime);
+            /*for(int i = 1; i <= 10; i++)
+            {
+                jumpReleased = false;
+                yield return new WaitForSeconds(jumpTime/10);
+                if(Input.GetButton("Jump") && !jumpReleased)
+                {
+                    
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce/3);
+                }
+                if(Input.GetButtonUp("Jump"))
+                {
+                    jumpReleased = true;
+                }
+            }*/
+           
+        }
+    }
 
     private bool TouchingWall()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, new Vector2(transform.localScale.x, 0), 0.1f, wallLayer);
         return raycastHit.collider != null;
-        Debug.Log("Touching wall");
+        //Debug.Log("Touching wall");
     }
 
-    void WallJump(){
+    private IEnumerator WallJump()
+    {
+        if(TouchingWall() && !isJumping && Input.GetButtonDown("Jump") && !IsGrounded())
+        {
+                Debug.Log("WJ PRESSED");
+                isWallJumping = true;
+                //rb.AddForce(new Vector2((speed * - transform.localScale.x), jumpForce));
+                rb.linearVelocity = new Vector2(speed * -moveInput, jumpForce);
+                yield return new WaitForSeconds(airMoveCooldown);
+                isWallJumping = false;
+                /*for(int i = 0; i < 10; i++)
+                {
+                    if(Input.GetButton("Jump") && !jumpReleased)
+                    {
+                        rb.AddForce(Vector2.up * jumpForce);
+                    }
+                    CheckJumpReleased();
+                }*/
+                rb.linearVelocity = new Vector2(speed * moveInput, jumpForce);
+                //rb.AddForce(new Vector2((speed * transform.localScale.x), jumpForce));
+                yield return new WaitForSeconds(wallJumpCooldown);
+
+                
+        }
+    }
+
+    private void HandleCornerJumping()
+    {
+        if(TouchingWall() && IsGrounded() && Input.GetButtonDown("Jump"))
+        {
+            Debug.Log("Should Corner Jump");
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        }
+    }
+
+    /*private void CheckJumpReleased()
+    {
+        if(Input.GetButtonUp("Jump"))
+        {
+            jumpReleased = true;
+        }
+    }*/
+    /*void WallJump(){
         if(TouchingWall() && !IsGrounded() && Input.GetButtonDown("Jump")){ // this will run when the button is pressed initially
-            Debug.Log("Pressed");
+           // Debug.Log("Pressed");
             isJumping = true;
             jumpTimeCounter = jumpTime; 
-            rb.linearVelocity = Vector2.up * jumpForce; // adds the jumpforce to the players vertical velocity, I might want to make this into a force rather than velocity
+            //rb.linearVelocity = Vector2.zero;
+            //rb.linearVelocity = new Vector2(speed * -moveInput, jumpForce); 
+            //rb.AddForce(transform.up * jumpForce);
+            rb.AddForce(new Vector2((speed * 3) * -transform.localScale.x, jumpForce));
+            
+            
+            
+            
             Debug.Log(isJumping);
         }
 
-        if(Input.GetButton("Jump") && isJumping == true){ // this will run when the jump button is held
+        /*if(Input.GetButton("Jump") && isJumping == true){ // this will run when the jump button is held
             Debug.Log("Holding");
             if(jumpTimeCounter > 0){ // will add this force as long as the time is still going
-                 rb.linearVelocity = Vector2.up * jumpForce;
+                 //rb.linearVelocity = Vector2.up * jumpForce;
+                 rb.AddForce(transform.up * jumpForce);
+                 
                  jumpTimeCounter -= Time.deltaTime;
             } else{
                 isJumping = false;
@@ -193,21 +298,27 @@ public class PlayerController : MonoBehaviour
                 isJumping = false;
                 Debug.Log(isJumping);
             }   
-    }
+    }*/
 
 
     private IEnumerator Dash()
     {
-        canDash = false;
-        isDashing = true;
-        float ogGravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-        yield return new WaitForSeconds(dashingTime);
-        rb.gravityScale = ogGravity;
-        isDashing = false;
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
+        
+        if(canDash && Input.GetKeyDown(KeyCode.Space))
+        {
+            numDashes--;
+            canDash = false;
+            isDashing = true;
+            float ogGravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            rb.linearVelocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            yield return new WaitForSeconds(dashingTime);
+            rb.gravityScale = ogGravity;
+            isDashing = false;
+            yield return new WaitForSeconds(dashCooldown);
+        }
+        
+        //canDash = true;
     }
     /*void testCases()
     {
