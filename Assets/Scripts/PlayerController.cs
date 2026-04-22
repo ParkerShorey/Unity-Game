@@ -47,8 +47,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airMoveCooldown;
     private bool isWallJumping = false;
     private bool jumpReleased = false;
-
-
+    
+    //public bool teleported = GameObject.Find("Teleport").GetComponent<Teleport_Orb>().isTeleporting;
     void Awake()
     {
         startPosition = rb.position;
@@ -103,16 +103,14 @@ public class PlayerController : MonoBehaviour
             return;
         }
         if(moveInput > 0.01f){
-            transform.localScale = new Vector3(1,1,1);
+            transform.localScale = new Vector3(.9f,.9f,1);
         }
         else if(moveInput < -0.01f){
-            transform.localScale = new Vector3(-1,1,1);
+            transform.localScale = new Vector3(-.9f,.9f,1);
         }
          // Uses a circle object on the player to decide when they are touching the ground
         //CheckCol(); 
         //WallSlide();
-        StartCoroutine(Jump());
-        //TouchingWall();
         if(TouchingWall() || IsGrounded())
         {
             numDashes = availableDashes;
@@ -124,27 +122,19 @@ public class PlayerController : MonoBehaviour
         else{
             canDash = false;
         }
-        /*if(TouchingWall() && IsGrounded())
-        {
-            
-        }*/
-        
+        StartCoroutine(Jump());
         StartCoroutine(Dash());
+        //TouchingWall();
+        
+        
+        
         //Debug.Log(TouchingWall());
         StartCoroutine(WallJump());
         HandleCornerJumping();
 
             
             
-//            if (Input.GetKey(KeyCode.LeftArrow) && TouchingWall()){
-            /*if (Input.GetButtonDown("Jump") && TouchingWall()){
-                oldSpeed = speed;
-                speed += 30;
-                rb.linearVelocity = new Vector2(speed , rb.linearVelocity.y);
-            }/* else if (Input.GetKey(KeyCode.RightArrow) && TouchingWall()) {
-                Debug.Log("right");
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x + 30 , rb.linearVelocity.y);
-            }*/
+
         
     }
 
@@ -156,6 +146,7 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.layer == 7){
             Debug.Log("I died!");      
             transform.position = startPosition;
+            rb.linearVelocity = Vector2.zero;
             Debug.Log(startPosition);
         }
     }
@@ -163,55 +154,37 @@ public class PlayerController : MonoBehaviour
     {
         return Physics2D.OverlapCircle(circlePos.position, checkRadius, whatIsGround);
     }
-    /*void Jump()
-    {
-        if(IsGrounded() && Input.GetButtonDown("Jump")){ // this will run when the button is pressed initially
-          //  Debug.Log("Pressed");
-            isJumping = true;
-            jumpTimeCounter = jumpTime; 
-            rb.linearVelocity = Vector2.up * jumpForce; // adds the jumpforce to the players vertical velocity, I might want to make this into a force rather than velocity
-            //Debug.Log(isJumping);
-        }
 
-        if(Input.GetButton("Jump") && isJumping == true){ // this will run when the jump button is held
-            //Debug.Log("Holding");
-            if(jumpTimeCounter > 0){ // will add this force as long as the time is still going
-                 rb.linearVelocity = Vector2.up * jumpForce;
-                 jumpTimeCounter -= Time.deltaTime;
-            } else{
-                isJumping = false;
-            }
-        }
-        if(Input.GetButtonUp("Jump")) // this will run when the player releases the jump button
-            {
-              //  Debug.Log("Released");
-                isJumping = false;
-               // Debug.Log(isJumping);
-            }   
-    }
-    */
     private IEnumerator Jump()
     {
         if(!TouchingWall() && IsGrounded() && Input.GetButtonDown("Jump"))
         {
-            Debug.Log("JUMP PRESSED");
+//            Debug.Log("JUMP PRESSED");
+//            Debug.Log("NUMBER OF DASHES:" + numDashes);
+            isJumping = true;
             rb.linearVelocity = Vector2.up * jumpForce;
             //public bool jumpReleased = false;
-            yield return new WaitForSeconds(jumpTime);
-            /*for(int i = 1; i <= 10; i++)
+            //yield return new WaitForSeconds(jumpTime);
+            if(isJumping == true)
             {
-                jumpReleased = false;
-                yield return new WaitForSeconds(jumpTime/10);
-                if(Input.GetButton("Jump") && !jumpReleased)
+
+            
+                for(int i = 1; i <= 10; i++)
                 {
+                    jumpReleased = false;
+                    yield return new WaitForSeconds(jumpTime/10);
+                    if(Input.GetButton("Jump") && !jumpReleased)
+                    {
                     
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce/3);
+                        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce/2);
+                        }
+                    if(Input.GetButtonUp("Jump"))
+                    {
+                        jumpReleased = true;
+                    }
                 }
-                if(Input.GetButtonUp("Jump"))
-                {
-                    jumpReleased = true;
-                }
-            }*/
+                isJumping = false;
+            }
            
         }
     }
@@ -302,10 +275,11 @@ public class PlayerController : MonoBehaviour
 
 
     private IEnumerator Dash()
-    {
-        
-        if(canDash && Input.GetKeyDown(KeyCode.Space))
+    {        
+        if(Input.GetButtonDown("Dash")){ Debug.Log("DASH PRESSED?");}
+        if(canDash && Input.GetButtonDown("Dash"))
         {
+            Debug.Log("DASH PRESSED");
             numDashes--;
             canDash = false;
             isDashing = true;

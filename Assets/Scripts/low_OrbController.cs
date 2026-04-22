@@ -3,7 +3,7 @@ using System.Collections;
 
 public class low_OrbController : MonoBehaviour
 {
-    [Header("rand")]
+    //[Header("rand")]
     [SerializeField] private Rigidbody2D player;
 
     [Header("Activation")]
@@ -11,7 +11,7 @@ public class low_OrbController : MonoBehaviour
     [SerializeField] private bool singleUse = true;
 
     [Header("Bounce Settings")]
-    [SerializeField] private float xBoost = 10f;
+    //[SerializeField] private float xBoost = 10f;
     [SerializeField] private float yBoost = 10f;
 
     private bool playerInRange = false;
@@ -26,7 +26,7 @@ public class low_OrbController : MonoBehaviour
             ActivateOrb();
         }
     }
-    private IEnumerator Dash()
+    /*private IEnumerator Dash()
     {
         float ogGravity = player.gravityScale;
         player.gravityScale = 0f;
@@ -34,10 +34,11 @@ public class low_OrbController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         player.gravityScale = ogGravity;
         yield return new WaitForSeconds(0f);
-    }
+    }*/
     private void ActivateOrb()
     {
-        StartCoroutine(Dash());
+       // StartCoroutine(Dash());
+        player.linearVelocity = new Vector2(player.linearVelocity.x, yBoost);
         if (singleUse)
         {
             orbUsed = true;
